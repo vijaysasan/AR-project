@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR House Model</title>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@ar-js-org/ar.js@latest/aframe/build/aframe-ar.min.js"></script>
+    <style>
+        body { margin: 0; overflow: hidden; }
+    </style>
+</head>
+<body>
+
+    <a-scene embedded arjs>
+        <!-- 3D House Model -->
+        <a-assets>
+            <a-asset-item id="house" src="assets/models/house.glb"></a-asset-item>
+        </a-assets>
+
+        <a-entity gltf-model="#house" position="0 0 0" scale="1 1 1"></a-entity>
+
+        <a-camera position="0 1.6 0" look-controls-enabled="false"></a-camera>
+    </a-scene>
+
+</body>
+</html>

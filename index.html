@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>AR House Experience</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar-js@1.1.2/dist/mindar-face-aframe.prod.js"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #f5f5f5;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        #header {
+            background: linear-gradient(135deg, #003366, #0055aa);
+            color: white;
+            padding: 20px;
+            font-size: 22px;
+            font-weight: bold;
+            position: relative;
+            z-index: 10;
+        }
+
+        .message {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .btn-ar {
+            background-color: #0055aa;
+            color: white;
+            font-size: 18px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 20px;
+        }
+
+        .btn-ar:hover {
+            background-color: #003366;
+        }
+
+        #ar-container {
+            display: none;
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="header">
+        🏠 Experience Your Future Home in AR
+    </div>
+    <a-scene embedded arjs sourceType="webcam">
+        <a-marker preset="hiro">
+            <a-entity 
+                gltf-model="assets/models/house-model.glb" 
+                position="0 0 0" 
+                scale="0.5 0.5 0.5">
+            </a-entity>
+        </a-marker>
+        <a-camera position="0 0 0"></a-camera>
+    </a-scene>
+
+    <div id="content">
+        <p>Scan the QR code to start the AR house experience.</p>
+        <button class="btn-ar" onclick="startAR()">🔍 Launch AR Experience</button>
+    </div>
+
+    <div id="ar-container">
+        <a-scene mindar-face embedded color-space="sRGB">
+            <a-camera position="0 0 0"></a-camera>
+            <a-entity mindar-face-target="anchorIndex: 0">
+                <a-entity 
+                    gltf-model="https://threejs.org/examples/models/gltf/house.glb"
+                    position="0 0 -3"
+                    scale="0.5 0.5 0.5">
+                </a-entity>
+            </a-entity>
+        </a-scene>
+        <div class="message">Move around to view the 3D house in AR.</div>
+    </div>
+
+    <script>
+        function startAR() {
+            document.getElementById("content").style.display = "none";
+            document.getElementById("ar-container").style.display = "block";
+        }
+    </script>
+
+</body>
+</html>
