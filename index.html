@@ -1,107 +1,262 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>AR House Experience</title>
-    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mind-ar-js@1.1.2/dist/mindar-face-aframe.prod.js"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Estate AR Visualization</title>
+    
+    <!-- A-Frame & AR.js with location-based support -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/1.3.0/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/AR.js/2.2.2/aframe-ar.min.js"></script>
+    
     <style>
         body {
             margin: 0;
             overflow: hidden;
-            background: #f5f5f5;
-            font-family: Arial, sans-serif;
-            text-align: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
         }
-
-        #header {
-            background: linear-gradient(135deg, #003366, #0055aa);
-            color: white;
-            padding: 20px;
-            font-size: 22px;
-            font-weight: bold;
-            position: relative;
-            z-index: 10;
-        }
-
-        .message {
+        
+        .ui-controls {
             position: fixed;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 14px;
-            text-align: center;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
         }
-
-        .btn-ar {
-            background-color: #0055aa;
-            color: white;
-            font-size: 18px;
-            padding: 12px 24px;
+        
+        button {
+            padding: 12px 20px;
+            background: rgba(255,255,255,0.8);
             border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: 0.3s;
-            margin-top: 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
-
-        .btn-ar:hover {
-            background-color: #003366;
+        
+        .status-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.8);
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-family: Arial, sans-serif;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
-
-        #ar-container {
+        
+        .loading-screen {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .loading-screen h1 {
+            font-family: Arial, sans-serif;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .loading-screen p {
+            font-family: Arial, sans-serif;
+            margin-bottom: 30px;
+            color: #666;
+            text-align: center;
+            max-width: 80%;
+        }
+        
+        .loading-bar {
+            width: 80%;
+            height: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .loading-progress {
+            height: 100%;
+            width: 0%;
+            background: #4CAF50;
+            transition: width 0.3s;
+        }
+        
+        .info-box {
+            position: fixed;
+            bottom: 80px;
+            left: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            max-width: 300px;
+            font-family: Arial, sans-serif;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
             display: none;
-            width: 100vw;
-            height: 100vh;
         }
     </style>
 </head>
 <body>
-
-    <div id="header">
-        🏠 Experience Your Future Home in AR
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loading-screen">
+        <h1>Real Estate AR Viewer</h1>
+        <p>Loading your augmented reality experience. Please allow location access when prompted.</p>
+        <div class="loading-bar">
+            <div class="loading-progress" id="loading-progress"></div>
+        </div>
     </div>
-    <a-scene embedded arjs sourceType="webcam">
-        <a-marker preset="hiro">
-            <a-entity 
-                gltf-model="assets/models/house-model.glb" 
-                position="0 0 0" 
-                scale="0.5 0.5 0.5">
-            </a-entity>
-        </a-marker>
-        <a-camera position="0 0 0"></a-camera>
+    
+    <!-- Status panel for GPS and system information -->
+    <div class="status-panel" id="status-panel">
+        GPS: Searching...<br>
+        Camera: Initializing...
+    </div>
+    
+    <!-- Information about the property -->
+    <div class="info-box" id="info-box">
+        <h3>Modern Apartment Complex</h3>
+        <p>3 BHK | 1500 sq ft</p>
+        <p>$350,000</p>
+        <p>Amenities: Pool, Gym, Garden</p>
+    </div>
+    
+    <!-- UI Controls -->
+    <div class="ui-controls">
+        <button id="place-btn">Place Building</button>
+        <button id="info-btn">Property Info</button>
+    </div>
+    
+    <!-- A-Frame Scene -->
+    <a-scene
+        vr-mode-ui="enabled: false"
+        embedded
+        arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix;"
+    >
+        <!-- Asset management -->
+        <a-assets>
+            <!-- Use a simple building model as fallback -->
+            <a-asset-item id="building-model" src="https://cdn.jsdelivr.net/gh/aframevr/assets@master/test-models/models/glTF-2.0/virtualcity/VC.gltf"></a-asset-item>
+        </a-assets>
+        
+        <!-- GPS-based entities - will be added via JS -->
+        <a-entity id="models-container"></a-entity>
+        
+        <!-- Camera -->
+        <a-entity camera look-controls position="0 1.6 0"></a-entity>
     </a-scene>
-
-    <div id="content">
-        <p>Scan the QR code to start the AR house experience.</p>
-        <button class="btn-ar" onclick="startAR()">🔍 Launch AR Experience</button>
-    </div>
-
-    <div id="ar-container">
-        <a-scene mindar-face embedded color-space="sRGB">
-            <a-camera position="0 0 0"></a-camera>
-            <a-entity mindar-face-target="anchorIndex: 0">
-                <a-entity 
-                    gltf-model="https://threejs.org/examples/models/gltf/house.glb"
-                    position="0 0 -3"
-                    scale="0.5 0.5 0.5">
-                </a-entity>
-            </a-entity>
-        </a-scene>
-        <div class="message">Move around to view the 3D house in AR.</div>
-    </div>
-
+    
     <script>
-        function startAR() {
-            document.getElementById("content").style.display = "none";
-            document.getElementById("ar-container").style.display = "block";
+        // Simulate loading progress
+        const loadingProgress = document.getElementById('loading-progress');
+        const loadingScreen = document.getElementById('loading-screen');
+        const statusPanel = document.getElementById('status-panel');
+        const infoBox = document.getElementById('info-box');
+        const modelsContainer = document.getElementById('models-container');
+        
+        let progress = 0;
+        const loadingInterval = setInterval(() => {
+            progress += 5;
+            loadingProgress.style.width = progress + '%';
+            
+            if (progress >= 100) {
+                clearInterval(loadingInterval);
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 500);
+            }
+        }, 100);
+        
+        // Update status info
+        function updateStatus(gpsStatus, cameraStatus) {
+            statusPanel.innerHTML = `
+                GPS: ${gpsStatus}<br>
+                Camera: ${cameraStatus}
+            `;
         }
+        
+        // Get device location
+        navigator.geolocation.watchPosition(
+            (position) => {
+                const { latitude, longitude } = position.coords;
+                updateStatus(`Found (${latitude.toFixed(6)}, ${longitude.toFixed(6)})`, 'Active');
+                
+                // In a real app, you would use this location data
+                console.log('User location:', latitude, longitude);
+            },
+            (error) => {
+                console.error('GPS error:', error);
+                updateStatus('Error - Please enable GPS', 'Active');
+            },
+            { enableHighAccuracy: true }
+        );
+        
+        // Function to add a 3D model at user's location
+        function placeModel() {
+            // Clear previous models
+            while (modelsContainer.firstChild) {
+                modelsContainer.removeChild(modelsContainer.firstChild);
+            }
+            
+            // Create building model
+            const building = document.createElement('a-entity');
+            building.setAttribute('gltf-model', '#building-model');
+            building.setAttribute('position', '0 0 -5'); // 5 meters in front of user
+            building.setAttribute('scale', '0.05 0.05 0.05'); // Scale down the model
+            building.setAttribute('rotation', '0 0 0');
+            
+            // Add the model to the scene
+            modelsContainer.appendChild(building);
+            
+            // Show success message
+            alert('Property model placed in your view. Look around!');
+        }
+        
+        // Button event listeners
+        document.getElementById('place-btn').addEventListener('click', placeModel);
+        
+        document.getElementById('info-btn').addEventListener('click', () => {
+            if (infoBox.style.display === 'none' || infoBox.style.display === '') {
+                infoBox.style.display = 'block';
+            } else {
+                infoBox.style.display = 'none';
+            }
+        });
+        
+        // Scene events
+        const scene = document.querySelector('a-scene');
+        
+        scene.addEventListener('loaded', function() {
+            console.log('AR scene loaded');
+            updateStatus('Ready', 'Active');
+        });
+        
+        scene.addEventListener('camera-error', function(event) {
+            console.error('Camera error:', event);
+            updateStatus('GPS: Unknown', 'ERROR - Please allow camera access');
+        });
+        
+        // Fallback in case AR.js initialization fails
+        setTimeout(() => {
+            if (loadingScreen.style.display !== 'none') {
+                loadingProgress.style.width = '100%';
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                    alert('AR initialization taking longer than expected. If you don\'t see the camera view, please ensure your device supports WebAR and you\'ve granted camera permissions.');
+                }, 500);
+            }
+        }, 10000);
     </script>
-
 </body>
 </html>
