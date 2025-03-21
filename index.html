@@ -3,54 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AR Studio</title>
-
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; background: #2E5DA8; }
-
-        /* Splash Screen */
-        #splash {
-            position: fixed;
-            width: 100%;
-            height: 100vh;
-            background: linear-gradient(to bottom, #00ff9d, #3B71C2);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        #splash img { width: 250px; margin-bottom: 20px; }
-
-        /* Start AR Button */
-        #start-btn {
-            background: #fff;
-            color: #2E5DA8;
-            border: none;
-            padding: 12px 20px;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        #start-btn:hover { background: #f1f1f1; }
-    </style>
+    <title>WebAR Real Estate</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <navbar class="navbar">
+        <div
+         class="logo">AR <span>STUDIO</span>
+         <img src="C:\Users\Admin\Downloads/logo-removebg-preview.png" alt="Logo" class="logo-image"> 
+        </div>
+        <ul class="nav-links">
+            <ul><a href="#vision">Vision ▾</a></ul>
+            <ul><a href="#mission">Mission ▾</a></ul>
+            <ul><a href="#features">features▾</a></ul>
+            <ul><a href="#gallery">gallery</a></ul>
+        </ul>
+        </div>
+        
+         <div class="language">
+            
 
-    <!-- Splash Screen -->
-    <div id="splash">
-        <img src="logo-removebg-preview.png" alt="AR Studio Logo">
-        <button id="start-btn">Start AR</button>
-    </div>
+                <button class="language-btn">🌍 EN ▼</button>
+                <div class="language-dropdown">
+                    <a href="#" data-lang="en">English</a>
+                    <a href="#" data-lang="es">Español</a>
+                    <a href="#" data-lang="fr">Français</a>
+                    <a href="#" data-lang="de">Deutsch</a>
+                    <a href="#" data-lang="hi">हिन्दी</a>
+                    <a href="#" data-lang="zh">中文</a>
+                    <a href="#" data-lang="ar">العربية</a>
+                    <a href="#" data-lang="ja">日本語</a>
+                    <a href="#" data-lang="ru">Русский</a>
+                </div>
+            </div>
+            <script src="scripts.js"></script> </div>
+        </nav>
+    
+       
+    </navbar>
+   
+    <header>
+        <h1 
+        font-family: 'garcedo', serif;>
+        Welcome to AR @ Construction</h1>
+        <p>Experience Construction Site Like Never Before With Augmented Reality.</p>
+    </header>
 
-    <!-- JavaScript to Redirect to Camera Page -->
-    <script>
-        document.getElementById("start-btn").addEventListener("click", function() {
-            window.location.href = "camera.html";  // Redirect to the camera page
-        });
-    </script>
+    
+    <section id="vision">
+        <img src="C:Users/Admin/Downloads/vision.jpg" alt="Our Vision">
+        <div class="text-content">
+            <h2>Our Vision</h2>
+            <p>We Aim To Revolutionize The Construction Industry Using AR Technology, Enabling Users To Visualize Their Dream Home In Augmented Reality.</p>
+        </div>
+    </section>
+
+
+    <section id="mission">
+        <div class="text-content">
+            <h2>Our Mission</h2>
+            <p>We Provide An immersive And Interactive 3D Home Viewing Experience With AR Technology To Enhance Property Decisions.</p>
+        </div>
+        <img src="C:/Users/Admin/OneDrive/Pictures/Screenshots/mission.png" alt="Our Mission">
+    </section>
+    <section id="explore-ar">
+        <h2>Experience Augmented Reality</h2>
+        <p>Click below to explore properties in AR mode.</p>
+        <button class="ar-button" onclick="window.location.href='ar-view.html'">Explore in AR</button>
+    </section>
+   
+    <section id="features">
+        <h2>Why Choose WebAR?</h2>
+        <div class="features-container">
+            <div class="feature">
+                <img src="C:Users/Admin/Downloads/gallery1.jpg" alt="AR Home View">
+                <h3>Immersive Home Viewing</h3>
+                <p>Experience homes in Augmented Reality before making a decision.</p>
+            </div>
+            <div class="feature">
+                <img src="C:Users/Admin/Downloads/gallery2.jpg" alt="3D Models">
+                <h3>3D Customization</h3>
+                <p>Customize Wall Colors, Furniture, And More In Real Time.</p>
+            </div>
+            <div class="feature">
+                <img src="C:Users/Admin/Downloads/testimonials.jpg" alt="Happy Clients">
+                <h3>Trusted by Homebuyers</h3>
+                <p>Thousands Of Buyers Have Successfully Found Their Dream Home.</p>
+            </div>
+        </div>
+    </section>
+
+   
+    <section id="gallery">
+        <h2>Explore Our Properties</h2>
+        <div class="gallery-container">
+            <img src="C:/Users/Admin/OneDrive/Pictures/Screenshots/gallery1.png" alt="Property 1">
+            <img src="C:/Users/Admin/OneDrive/Pictures/Screenshots/gallery2.png" alt="Property 2">
+            <img src="C:/Users/Admin/OneDrive/Pictures/Screenshots/gallery3.png" alt="Property 3">
+            <img src="C:/Users/Admin/OneDrive/Pictures/Screenshots/gallery4.png" alt="Property 4">
+        </div>
+    </section>
+    
+    
+
+    
+    <section id="testimonials">
+        <h2>What Our Clients Say</h2>
+        <div class="testimonial">
+            <img src="C:Users/Admin/Downloads/testimonials.jpg" alt="Client">
+            <p>"WebAR help me visualize my dream home before purchase! A game-changer for real estate."</p>
+            <h3>- vijay</h3>
+        </div>
+    </section>
+
+    <a-scene embedded arjs>
+        <a-entity id="house" position="0 0 -2" gltf-model="./assets/models/house-model.glb"></a-entity>
+        <a-camera position="0 0 5"></a-camera>
+    </a-scene>
+    
+   
+    <footer>
+        <p>&copy; 2025 WebAR Real Estate. All Rights Reserved.</p>
+    </footer>
+
+    <script src="scripts.js"></script>
+    <script src="server.js"></script>
+    <script src="models.js"></script>
+    <script src="routes.js"></script>
 
 </body>
 </html>
