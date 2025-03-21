@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR.js Location-Based</title>
+
+    <!-- A-Frame & AR.js -->
+    <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.5/three.js/build/ar-threex-location-only.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.5/aframe/build/aframe-ar.js"></script>
+</head>
+<body style="margin: 0; overflow: hidden;">
+
+    <a-scene 
+        vr-mode-ui="enabled: false" 
+        arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false" 
+        renderer="antialias: true; alpha: true">
+        
+        <a-camera gps-new-camera="gpsMinDistance: 5"></a-camera>
+        
+        <!-- AR Object (Red Box) - Will Be Placed Dynamically -->
+        <a-entity id="arObject" material="color: red" geometry="primitive: box" scale="10 10 10"></a-entity>
+
+    </a-scene>
+
+    <script>
+        // Get User's Location and Set AR Object Position
+        function updateLocation(position) {
+            let lat = position.coords.latitude;
+            let lon = position.coords.longitude;
+            console.log("User Location: ", lat, lon);
+
+            let arObject = document.getElementById("arObject");
+            arObject.setAttribute("gps-new-entity-place", `latitude: ${lat}; longitude: ${lon};`);
+        }
+
+        // Handle Errors
+        function locationError(error) {
+            console.error("Error Getting Location: ", error);
+        }
+
+        // Ask for GPS Access
+        if ("geolocation" in navigator) {
+            navigator.geolocation.watchPosition(updateLocation, locationError, {
+                enableHighAccuracy: true,
+                maximumAge: 0
+            });
+        } else {
+            alert("Geolocation is not supported by your browser.");
+        }
+    </script>
+
+</body>
+</html>
