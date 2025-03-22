@@ -10,14 +10,15 @@
         vr-mode-ui="enabled: false"
         renderer="antialias: true; alpha: true">
             
-        <a-marker preset="add">
+        <a-marker preset="hiro">
             <!-- we use cors proxy to avoid cross-origin problems ATTENTION! you need to set up your server -->
             <a-entity
               position="0 0 0"
                 scale="1 1 1"
                 rotation="0 180 0"
                 animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear"
-                gesture-handler>
+                gesture-handler
+                gltf-model="result.gltf">
             ></a-entity>
         </a-marker>
         <a-entity camera></a-entity>
